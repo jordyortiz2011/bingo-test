@@ -1,0 +1,236 @@
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="css/style.css" type="text/css" />
+    <script src="scripts/jquery-3.6.0.min.js"></script>
+    <title>Bingo!</title>
+</head>
+
+<body>
+<h1>BINGO TEST</h1>
+<h3>Instruction</h3>
+<p>Step 1: Click in "Generate new Card"</p>
+<p>Step 2: Click in "Call number", to start to pick numbers for the bingo</p>
+<p>Step 3: If the random number is in your card, click in the number for save it.</p>
+<p>Step 4: Click in "Check Bingo Card", to check if the Bingo's card is the winner.</p>
+
+<button id="btn-new-card" >Generate new Card</button>
+<table id="bingo-card">
+    <tr>
+        <th class="header">B</th>
+        <th class="header">I</th>
+        <th class="header">N</th>
+        <th class="header">G</th>
+        <th class="header">O</th>
+    </tr>
+    <tr>
+        <td><input id="sq0" class="square" type="button" value="&nbsp;" onclick="markSquare('sq0')"></td>
+        <td><input id="sq1" class="square" type="button" value="&nbsp;" onclick="markSquare('sq1')"></td>
+        <td><input id="sq2" class="square" type="button" value="&nbsp;" onclick="markSquare('sq2')"></td>
+        <td><input id="sq3" class="square" type="button" value="&nbsp;" onclick="markSquare('sq3')"></td>
+        <td><input id="sq4" class="square" type="button" value="&nbsp;" onclick="markSquare('sq4')"></td>
+    </tr>
+    <tr>
+        <td><input id="sq5" class="square" type="button" value="&nbsp;" onclick="markSquare('sq5')"></td>
+        <td><input id="sq6" class="square" type="button" value="&nbsp;" onclick="markSquare('sq6')"></td>
+        <td><input id="sq7" class="square" type="button" value="&nbsp;" onclick="markSquare('sq7')"></td>
+        <td><input id="sq8" class="square" type="button" value="&nbsp;" onclick="markSquare('sq8')"></td>
+        <td><input id="sq9" class="square" type="button" value="&nbsp;" onclick="markSquare('sq9')"></td>
+    </tr>
+    <tr>
+        <td><input id="sq10" class="square" type="button" value="&nbsp;" onclick="markSquare('sq10')"></td>
+        <td><input id="sq11" class="square" type="button" value="&nbsp;" onclick="markSquare('sq11')"></td>
+        <td><input id="sq12" class="square" type="button" value="FREE" onclick="markSquare('sq12')"></td>
+        <td><input id="sq13" class="square" type="button" value="&nbsp;" onclick="markSquare('sq13')"></td>
+        <td><input id="sq14" class="square" type="button" value="&nbsp;" onclick="markSquare('sq14')"></td>
+    </tr>
+    <tr>
+        <td><input id="sq15" class="square" type="button" value="&nbsp;" onclick="markSquare('sq15')"></td>
+        <td><input id="sq16" class="square" type="button" value="&nbsp;" onclick="markSquare('sq16')"></td>
+        <td><input id="sq17" class="square" type="button" value="&nbsp;" onclick="markSquare('sq17')"></td>
+        <td><input id="sq18" class="square" type="button" value="&nbsp;" onclick="markSquare('sq18')"></td>
+        <td><input id="sq19" class="square" type="button" value="&nbsp;" onclick="markSquare('sq19')"></td>
+    </tr>
+    <tr>
+        <td><input id="sq20" class="square" type="button" value="&nbsp;" onclick="markSquare('sq20')"></td>
+        <td><input id="sq21" class="square" type="button" value="&nbsp;" onclick="markSquare('sq21')"></td>
+        <td><input id="sq22" class="square" type="button" value="&nbsp;" onclick="markSquare('sq22')"></td>
+        <td><input id="sq23" class="square" type="button" value="&nbsp;" onclick="markSquare('sq23')"></td>
+        <td><input id="sq24" class="square" type="button" value="&nbsp;" onclick="markSquare('sq24')"></td>
+    </tr>
+</table>
+
+<button id="btn-call-number" >Call number</button>
+<hr>
+<p>Current Call: <p id="currentCall">&nbsp;</p></p>
+<p>Called Numbers: </p>
+<p id="calledNums">None</p>
+
+<hr>
+
+<button id="btn-check-bingo" >Check Bingo Card</button>
+
+<script>
+    var usedNumbers = new Array(76);
+    var calledNumbers = new Array();
+
+    //TO MARK THE CARD
+    function markSquare(square) {
+        var currentSquare = document.getElementById(square);
+        if (currentSquare.style.backgroundColor == "lightblue")
+            currentSquare.style.backgroundColor = "#ffffff";
+        else
+            currentSquare.style.backgroundColor = "lightblue";
+        return;
+    }
+
+    $(document).ready(function() {
+        startBingo();
+
+        function startBingo() {
+            generateNewBingo();
+        }
+
+        function generateNewBingo() {
+            // set all elements in usedNumbers array as false
+            resetUsedNumbers();
+            // loops 24 times because there are 24 squares (not including free square)
+            for (var i = 0; i < 25; i++) {
+                if (i == 12) // skip free square
+                    continue;
+                // generates a number for each square
+                generateSquare(i);
+            }
+        }
+
+        function generateSquare(squareNum) {
+            var currentSquare = "sq" + squareNum;
+            var number;
+            // array of column numbers
+            var baseNumbers = new Array(0,1,2,3,4,0,1,2,3,4,0,1,2,3,4,0,1,2,3,4,0,1,2,3,4);
+            // generates random number for each square (depends on column)
+            newNumber = (baseNumbers[squareNum] * 15) + generateNewNum();
+            // loop makes sure there are no duplicates
+            while (usedNumbers[newNumber] == true) {
+                newNumber = (baseNumbers[squareNum] * 15) + generateNewNum();
+            }
+            // sets the used number in the array as true so no duplicates
+            usedNumbers[newNumber] = true;
+            // sets the current square to the new number
+            document.getElementById(currentSquare).value = newNumber;
+        }
+
+        function generateNewNum() {
+            // generates a random numbers between 1 and 15
+            return Math.floor((Math.random() * 15) + 1); //15
+        }
+
+        function resetUsedNumbers() {
+            // sets all elements of the usedNumbers array to false (resets the array)
+            for (var i = 0; i < usedNumbers.length; i++) {
+                usedNumbers[i] = false;
+            }
+        }
+
+        // when clicked, generates a new random card
+        $('#btn-new-card').on('click', '' , function () {
+            generateAnotherCard();
+        });
+
+        function generateAnotherCard() {
+            resetUsedNumbers();
+            generateNewBingo();
+            //resetSquareColours();
+        }
+
+        function callNumber() {
+            var rand = Math.floor(Math.random() * 75) + 1; // random number between 1 and 75
+            // if the number is in the array (already been called)
+            if (calledNumbers.includes(rand))
+                callNumber();
+            else {
+                calledNumbers.push(rand);
+                if (rand >= 1 && rand <= 15)
+                    document.getElementById("currentCall").innerHTML = 'B' + rand;
+                else if (rand >= 16 && rand <= 30)
+                    document.getElementById("currentCall").innerHTML = 'I' + rand;
+                else if (rand >= 31 && rand <= 45)
+                    document.getElementById("currentCall").innerHTML = 'N' + rand;
+                else if (rand >= 46 && rand <= 60)
+                    document.getElementById("currentCall").innerHTML = 'G' + rand;
+                else
+                    document.getElementById("currentCall").innerHTML = 'O' + rand;
+                document.getElementById("calledNums").innerHTML = calledNumbers;
+            }
+        }
+
+        // when clicked, generates a new random card
+        $('#btn-call-number').on('click', '' , function () {
+            callNumber();
+        });
+
+        function fullBingo() {
+            goal = "full";
+            document.getElementById("bFull").style.backgroundColor = "#4286f4";
+            document.getElementById("bFull").disabled = true;
+            document.getElementById("bLine").disabled = true;
+            document.getElementById("bLine").style.backgroundColor = "#grey";
+        }
+
+
+        $('#btn-check-bingo').on('click', '' , function () {
+            checkFullBingo();
+        });
+
+        function checkFullBingo() {
+            var j = 0;
+            var flag = false;
+            for (var i = 0; i < 5; i++) {
+                var sq1 = document.getElementById('sq' + j);
+                j++;
+                var sq2 = document.getElementById('sq' + j);
+                j++;
+                var sq3 = document.getElementById('sq' + j);
+                j++;
+                var sq4 = document.getElementById('sq' + j);
+                j++;
+                var sq5 = document.getElementById('sq' + j);
+                j++;
+
+                if (sq1.style.backgroundColor == "lightblue" && calledNumbers.includes(parseInt(sq1.value)) &&
+                    sq2.style.backgroundColor == "lightblue" && calledNumbers.includes(parseInt(sq2.value)) &&
+                    sq3.style.backgroundColor == "lightblue" && calledNumbers.includes(parseInt(sq3.value)) &&
+                    sq4.style.backgroundColor == "lightblue" && calledNumbers.includes(parseInt(sq4.value)) &&
+                    sq5.style.backgroundColor == "lightblue" && calledNumbers.includes(parseInt(sq5.value))) {
+                    flag = true;
+                }
+                else if (sq1.style.backgroundColor == "lightblue" && calledNumbers.includes(parseInt(sq1.value)) &&
+                    sq2.style.backgroundColor == "lightblue" && calledNumbers.includes(parseInt(sq2.value)) &&
+                    sq3.value == "FREE" &&
+                    sq4.style.backgroundColor == "lightblue" && calledNumbers.includes(parseInt(sq4.value)) &&
+                    sq5.style.backgroundColor == "lightblue" && calledNumbers.includes(parseInt(sq5.value))) {
+                    flag = true;
+                }
+                else {
+                    flag = false;
+                    break;
+                }
+            }
+            if (flag == true) {
+                //youWinFullBingo();
+                document.getElementById("currentCall").innerHTML = "BINGO! YOU WIN";
+                alert("BINGO! You win!");
+            }
+            else {
+                document.getElementById("currentCall").innerHTML = "Not a valid bingo! !";
+                alert('YOU NOT WIN, Its not valid bingo')
+                return;
+            }
+        }
+
+    });
+</script>
+</body>
+
+</html>
